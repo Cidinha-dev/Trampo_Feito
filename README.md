@@ -72,7 +72,7 @@ venv\Scripts\activate
 -   
     
 
-O que acontece aqui?
+
 
 - Você "entra" no ambiente virtual.
     
@@ -185,20 +185,6 @@ Se tudo estiver configurado corretamente, você verá a página inicial padrão 
 
 ---
 
-### Recapitulando: Fluxo até Aqui
-
-3. Criamos a estrutura básica do projeto.
-    
-4. Configuramos um ambiente virtual Python.
-    
-5. Instalamos Django e o driver do PostgreSQL.
-    
-6. Criamos o projeto Django no diretório backend.
-    
-7. Testamos o servidor de desenvolvimento para garantir que tudo funcione.
-    
-
-  
 
 ### Próximos Passos
 
@@ -252,415 +238,256 @@ email: [de.trampofeito@gmail.com](mailto:de.trampofeito@gmail.com) 
 
 senha: admin@trampo
 
-wix: TrampoFeito@123456
+
 
   
 **
 
-### 1.1. Crie o Diretório do Projeto
+# Projeto Django - Trampo Feito
 
-mkdir projeto_django
+Este guia fornece um passo a passo detalhado para criar um projeto Django desde o início, incluindo a configuração do ambiente, implementação do sistema e customização do painel administrativo.
 
-cd projeto_django
+---
 
-  
+## 1. **Configuração do Ambiente**
 
-### 1.2. Crie e Ative um Ambiente Virtual
-
+### 1.1 Criar Ambiente Virtual
+No terminal, execute:
+```bash
 python3 -m venv venv
-
 source venv/bin/activate
+```
 
-  
-
-### 1.3. Instale o Django e Outras Bibliotecas Necessárias
-
-pip install django psycopg2-binary django-jazzmin
-
-  
+### 1.2 Instalar Django e Dependências
+```bash
+pip install django jazzmin
+```
 
 ---
 
-## 2. Criação do Projeto e Configuração Inicial
+## 2. **Criar o Projeto e Estrutura Inicial**
 
-### 2.1. Crie o Projeto Django
-
+### 2.1 Criar o Projeto Django
+```bash
 django-admin startproject service_backend .
-
-  
-
-### 2.2. Estrutura Inicial do Projeto
-
-projeto_django/
-
+```
+Estrutura:
+```
+backend/
 ├── manage.py
-
 ├── service_backend/
+    ├── __init__.py
+    ├── settings.py
+    ├── urls.py
+    ├── asgi.py
+    ├── wsgi.py
+```
 
-│   ├── __init__.py
-
-│   ├── asgi.py
-
-│   ├── settings.py
-
-│   ├── urls.py
-
-│   └── wsgi.py
-
-  
-
----
-
-## 3. Configurações do Projeto
-
-### 3.1. Edite settings.py
-
-Adicione as seguintes configurações no arquivo service_backend/settings.py:
-
-#### Configuração do Banco de Dados (PostgreSQL):
-
-DATABASES = {
-
-    'default': {
-
-        'ENGINE': 'django.db.backends.postgresql',
-
-        'NAME': 'nome_do_banco',
-
-        'USER': 'usuario_do_banco',
-
-        'PASSWORD': 'senha_do_banco',
-
-        'HOST': 'localhost',
-
-        'PORT': '5432',
-
-    }
-
-}
-
-  
-
-#### Configurações de Arquivos Estáticos:
-
-import os
-
-  
-
-STATIC_URL = '/static/'
-
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-  
-
-#### Integração com Jazzmin:
-
-INSTALLED_APPS = [
-
-    'jazzmin',
-
-    'django.contrib.admin',
-
-    'django.contrib.auth',
-
-    'django.contrib.contenttypes',
-
-    'django.contrib.sessions',
-
-    'django.contrib.messages',
-
-    'django.contrib.staticfiles',
-
-    # Apps personalizados
-
-    'servicos',
-
-    'pagamentos',
-
-]
-
-  
-
-JAZZMIN_SETTINGS = {
-
-    "site_title": "Admin Trampo Feito",
-
-    "site_header": "Trampo Feito",
-
-    "welcome_sign": "Bem-vindo ao Trampo Feito Admin",
-
-    "show_ui_builder": True,
-
-}
-
-  
-
----
-
-## 4. Crie os Apps
-
-### 4.1. Criar Apps Personalizados
-
+### 2.2 Criar Aplicativos
+```bash
 python manage.py startapp servicos
-
 python manage.py startapp pagamentos
-
-  
-
-### 4.2. Atualize INSTALLED_APPS
-
-Edite service_backend/settings.py para incluir os apps criados:
-
-INSTALLED_APPS += [
-
-    'servicos',
-
-    'pagamentos',
-
-]
-
-  
+```
+Estrutura:
+```
+backend/
+├── servicos/
+├── pagamentos/
+```
 
 ---
 
-## 5. Modelos e Banco de Dados
+## 3. **Configuração de Apps e Banco de Dados**
 
-### 5.1. Modelos
+### 3.1 Registrar Apps
+No `settings.py`, adicione em `INSTALLED_APPS`:
+```python
+INSTALLED_APPS = [
+    ...
+    'servicos',
+    'pagamentos',
+    'jazzmin',
+]
+```
 
-#### Serviços: servicos/models.py
+### 3.2 Configurar Banco de Dados
+Configure a conexão com o banco no `settings.py` (exemplo com SQLite):
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+```
 
+---
+
+## 4. **Modelos de Dados**
+
+### 4.1 Serviços
+Crie `servicos/models.py`:
+```python
 from django.db import models
-
-  
 
 class Servico(models.Model):
+    nome = models.CharField(max_length=255)
+    descricao = models.TextField()
+    preco = models.DecimalField(max_digits=10, decimal_places=2)
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
 
-    nome = models.CharField(max_length=255)
+    def __str__(self):
+        return self.nome
+```
 
-    descricao = models.TextField()
-
-    preco = models.DecimalField(max_digits=10, decimal_places=2)
-
-    criado_em = models.DateTimeField(auto_now_add=True)
-
-    atualizado_em = models.DateTimeField(auto_now=True)
-
-  
-
-    def __str__(self):
-
-        return self.nome
-
-  
-
-#### Pagamentos: pagamentos/models.py
-
+### 4.2 Pagamentos
+Crie `pagamentos/models.py`:
+```python
 from django.db import models
 
-  
-
 class Pagamento(models.Model):
+    metodo = models.CharField(max_length=100)
+    valor = models.DecimalField(max_digits=10, decimal_places=2)
+    criado_em = models.DateTimeField(auto_now_add=True)
 
-    metodo = models.CharField(max_length=50)
-
-    valor = models.DecimalField(max_digits=10, decimal_places=2)
-
-    data_pagamento = models.DateTimeField(auto_now_add=True)
-
-  
-
-    def __str__(self):
-
-        return f"{self.metodo} - R$ {self.valor}"
-
-  
-
-### 5.2. Migrações do Banco de Dados
-
-python manage.py makemigrations
-
-python manage.py migrate
-
-  
+    def __str__(self):
+        return f"{self.metodo} - R$ {self.valor:.2f}"
+```
 
 ---
 
-## 6. Admin Django
+## 5. **Administração**
 
-### 6.1. Personalize o Admin
-
-#### servicos/admin.py
-
+### 5.1 Registrar Modelos no Admin
+Atualize `servicos/admin.py`:
+```python
 from django.contrib import admin
-
 from .models import Servico
 
-  
+admin.site.register(Servico)
+```
 
-@admin.register(Servico)
-
-class ServicoAdmin(admin.ModelAdmin):
-
-    list_display = ('nome', 'preco', 'criado_em', 'atualizado_em')
-
-    search_fields = ('nome',)
-
-  
-
-#### pagamentos/admin.py
-
+Atualize `pagamentos/admin.py`:
+```python
 from django.contrib import admin
-
 from .models import Pagamento
 
-  
+admin.site.register(Pagamento)
+```
 
-@admin.register(Pagamento)
-
-class PagamentoAdmin(admin.ModelAdmin):
-
-    list_display = ('metodo', 'valor', 'data_pagamento')
-
-    search_fields = ('metodo',)
-
-  
+### 5.2 Personalizar Jazzmin
+No `settings.py`, configure:
+```python
+JAZZMIN_SETTINGS = {
+    "site_title": "Admin Trampo Feito",
+    "site_header": "Trampo Feito",
+    "welcome_sign": "Bem-vindo ao Trampo Feito Admin",
+    "show_ui_builder": True,
+}
+```
 
 ---
 
-## 7. URLs e Views
+## 6. **URLs e Views**
 
-### 7.1. URLs Globais: service_backend/urls.py
-
+### 6.1 Configurar URLs
+No `service_backend/urls.py`:
+```python
 from django.contrib import admin
-
 from django.urls import path, include
 
-  
-
 urlpatterns = [
-
-    path('admin/', admin.site.urls),
-
-    path('servicos/', include('servicos.urls')),
-
+    path('admin/', admin.site.urls),
+    path('servicos/', include('servicos.urls')),
 ]
+```
 
-  
-
-### 7.2. URLs dos Apps
-
-#### Serviços: servicos/urls.py
-
-from django.urls import path
-
-from . import views
-
-  
-
-urlpatterns = [
-
-    path('', views.lista_servicos, name='lista_servicos'),
-
-    path('adicionar/', views.adicionar_servico, name='adicionar_servico'),
-
-]
-
-  
-
-#### Views de Serviços: servicos/views.py
-
+### 6.2 Criar Views para Serviços
+No `servicos/views.py`:
+```python
 from django.shortcuts import render
-
 from .models import Servico
 
-  
-
-# Listar serviços
-
 def lista_servicos(request):
+    servicos = Servico.objects.all()
+    return render(request, 'servicos/lista_servicos.html', {'servicos': servicos})
+```
 
-    servicos = Servico.objects.all()
+### 6.3 Configurar URLs de Serviços
+Crie `servicos/urls.py`:
+```python
+from django.urls import path
+from . import views
 
-    return render(request, 'servicos/lista_servicos.html', {'servicos': servicos})
-
-  
-
-# Adicionar serviço
-
-def adicionar_servico(request):
-
-    if request.method == 'POST':
-
-        form = ServicoForm(request.POST)
-
-        if form.is_valid():
-
-            form.save()
-
-            return render(request, 'servicos/sucesso.html')
-
-    else:
-
-        form = ServicoForm()
-
-    return render(request, 'servicos/adicionar_servico.html', {'form': form})
-
-  
+urlpatterns = [
+    path('', views.lista_servicos, name='lista_servicos'),
+]
+```
 
 ---
 
-## 8. Templates e Estilos
+## 7. **Templates e Estáticos**
 
-### 8.1. Estrutura de Templates
+### 7.1 Estrutura de Templates
+Estrutura recomendada:
+```
+backend/
+├── templates/
+|   ├── servicos/
+|       └── lista_servicos.html
+|   └── homepage.html
+```
 
-backend/templates/
+### 7.2 Exemplo de Template: `homepage.html`
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trampo Feito</title>
+</head>
+<body>
+    <h1>Bem-vindo ao Trampo Feito!</h1>
+    <a href="/servicos/">Procurar Serviços</a>
+</body>
+</html>
+```
 
-├── homepage.html
+### 7.3 Configurar Estáticos
+No `settings.py`:
+```python
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+```
+Para coletar estáticos:
+```bash
+python manage.py collectstatic
+```
 
-└── servicos/
+---
 
-    ├── lista_servicos.html
-
-    ├── adicionar_servico.html
-
-    └── sucesso.html
-
-
-
-## 9. Estilizando com CSS
-
-### Estrutura do Diretório de Estáticos
-
-static/
-
-└── css/
-
-    └── style.css
-
-  
-
-
-
-## 10. Finalização
-
-### Comandos para Gerenciar o Servidor
-
-Iniciar o servidor:  
-python manage.py runserver
-
--   
-    
-- Parar o servidor: Ctrl + C
-    
-
-Aplicar migrações:  
+## 8. **Iniciar o Servidor**
+Execute:
+```bash
 python manage.py makemigrations
-
 python manage.py migrate
+python manage.py runserver
+```
+Acesse o projeto em: [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
--   
+---
+
+## 9. **Extensões e Melhorias Futuras**
+- **Implementar Busca**: Adicione um form para busca de serviços.
+- **Autenticação**: Configure login e área restrita.
+- **Integração com Pagamentos**: Utilize gateways como PayPal ou Stripe.
+- **Hospedagem**: Publique o projeto no Heroku ou AWS.
+
+Este guia abrange desde a criação do projeto até configurações de personalização. Altere conforme suas necessidades!
+
+
     ----------------
     
 
