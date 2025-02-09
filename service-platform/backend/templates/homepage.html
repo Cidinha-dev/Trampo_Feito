@@ -1,0 +1,16 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem-vindo ao Trampo Feito!</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <h1>Bem-vindo ao Trampo Feito!</h1>
+    <a href="{% url 'buscar_servicos' %}">Procurar Serviços</a>
+    <a href="{% url 'lista_servicos' %}">Cadastrar Serviço</a>
+    <a href="/admin/">Área Administrativa</a>
+</body>
+</html>

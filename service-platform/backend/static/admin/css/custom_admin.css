@@ -1,0 +1,37 @@
+/* Alterar fundo do painel admin */
+body {
+    background-color: #f9f9f9;
+}
+
+/* Estilizar o cabeçalho */
+#header {
+    background-color: #2a3f54;
+    color: white;
+}
+
+#header h1 a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+/* Estilizar links no painel */
+.module h2 {
+    color: #2a3f54;
+    background-color: #e7f2f8;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.nav-sidebar a {
+    color: #2a3f54;
+}
+
+.nav-sidebar a:hover {
+    color: #ff6f61;
+
+}
+.navbar-brand img {
+    height: 40px; /* Ajuste a altura da logo */
+    max-width: 100%;
+    object-fit: contain;
+}
